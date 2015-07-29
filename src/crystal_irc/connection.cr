@@ -1,6 +1,7 @@
 require "socket"
 require "logger"
 require "openssl"
+require "./message"
 
 module CrystalIRC
 
@@ -10,8 +11,8 @@ module CrystalIRC
     def initialize(@host : String, @port=6667 : Int32, @ssl=false : Bool)
       @connected = false
       @queue = Channel(String).new
-      @msg_channel = Channel(CrystalIRC::Message).new
-      @subscriptions = {} of String => Array(Proc(CrystalIRC::Message, Void))
+      @msg_channel = Channel(Message).new
+      @subscriptions = {} of String => Array(Proc(Message, Void))
       @logger = Logger.new STDOUT
       @logger.level = Logger::DEBUG
       connect
@@ -21,7 +22,7 @@ module CrystalIRC
       @queue.send "#{msg}\r\n"
     end
 
-    def on msg_type: String, &block : CrystalIRC::Message ->
+    def on msg_type: String, &block : Message ->
       if @subscriptions.has_key? msg_type
         @subscriptions[msg_type] << block
       else
@@ -34,7 +35,7 @@ module CrystalIRC
       loop do
         raw_message = socket.gets.to_s
         if raw_message.length > 0
-          @msg_channel.send CrystalIRC::Message.new raw_message
+          @msg_channel.send Message.new raw_message
           @logger.debug ">>#{raw_message}"
         end
         sleep 0.25

@@ -33,12 +33,17 @@ module CrystalIRC
     private def receive_worker socket
       @logger.debug "Starting receive-worker"
       loop do
-        raw_message = socket.gets.to_s
-        if raw_message.length > 0
-          @msg_channel.send Message.new raw_message
-          @logger.debug ">>#{raw_message}"
+        begin
+          raw_message = socket.gets.to_s
+        rescue
+          @logger.debug "Couldn't receive an unknown message"
+        else
+          if raw_message.length > 0
+            @msg_channel.send Message.new raw_message
+            @logger.debug ">>#{raw_message}"
+          end
+          sleep 0.25
         end
-        sleep 0.25
       end
     end
 
@@ -46,8 +51,13 @@ module CrystalIRC
       @logger.debug "Starting send-worker"
       loop do
         next_message = @queue.receive
-        socket.puts next_message
-        @logger.debug "<<#{next_message}"
+        begin
+          socket.puts next_message
+        rescue
+          @logger.debug "Couldn't send '#{next_message}'"
+        else
+          @logger.debug "<<#{next_message}"
+        end
       end
     end
 

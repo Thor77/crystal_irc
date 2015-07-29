@@ -10,7 +10,7 @@ module CrystalIRC
       parts = raw_message.split " "
       if parts[0][0] != ':'
         @type = parts[0]
-        parts[0] = parts[0][1..-1]
+        parts = parts[1..-1]
         @data = parts.join " "
       else
         @host = parts[0][1..-1]

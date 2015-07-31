@@ -54,5 +54,9 @@ module CrystalIRC
       "#{CrystalIRC::Message::PART} #{channel}"
     end
 
+    def self.quit msg="Bye!"
+      "#{CrystalIRC::Message::QUIT} :#{msg}"
+    end
+
   end
 end

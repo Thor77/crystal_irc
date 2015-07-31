@@ -49,5 +49,10 @@ module CrystalIRC
       "#{CrystalIRC::Message::JOIN} #{channel}"
     end
 
+    def self.part channel
+      channel = "#" + channel if channel[0] != '#'
+      "#{CrystalIRC::Message::PART} #{channel}"
+    end
+
   end
 end

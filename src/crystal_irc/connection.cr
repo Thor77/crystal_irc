@@ -84,6 +84,9 @@ module CrystalIRC
 
       # spawn fiber for sending msg from queue
       spawn send_worker(socket)
+
+      # set connected
+      @connected = true
     end
   end
 end

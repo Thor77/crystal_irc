@@ -15,7 +15,7 @@ module CrystalIRC
       @subscriptions = {} of String => Array(Proc(Message, Void))
       @logger = Logger.new STDOUT
       @logger.level = Logger::DEBUG
-      connect
+      @socket = connect
     end
 
     def send msg: String
@@ -78,15 +78,21 @@ module CrystalIRC
 
       socket = TCPSocket.new @host, @port
       socket = OpenSSL::SSL::Socket.new socket if @ssl
-
       # spawn fiber for receiving msg from sock and parsing them
-      spawn receive_worker(socket)
+      spawn receive_worker socket
 
       # spawn fiber for sending msg from queue
-      spawn send_worker(socket)
+      spawn send_worker socket
 
       # set connected
       @connected = true
+      socket
     end
+
+    def disconnect
+      @logger.info "Disconnect"
+      @socket.close
+    end
+
   end
 end

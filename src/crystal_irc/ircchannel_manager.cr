@@ -8,8 +8,16 @@ module CrystalIRC
       @channels = {} of String => IRCChannel
     end
 
+    def get_channel channel_name : String
+      @channels[channel.name]
+    end
+
     def add_channel channel : IRCChannel
       @channels[channel.name] = channel
+    end
+
+    def remove_channel channel : IRCChannel
+      @channels.delete channel.name
     end
 
     def register_handlers connection : Connection

@@ -28,5 +28,10 @@ module CrystalIRC
       @channelmanager.add_channel channel
     end
 
+    def remove_channel channel: IRCChannel
+      send Message.part channel.name
+      @channelmanager.remove_channel channel
+    end
+
   end
 end
